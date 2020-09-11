@@ -1,4 +1,4 @@
-# FileUpload plugin for CakePHP
+# 🆙 FileUpload plugin for CakePHP
 
 ## Installation
 

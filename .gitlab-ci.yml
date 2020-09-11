@@ -1,0 +1,25 @@
+stages:
+  # - 🧪 test
+  - 🚀 deploy
+
+# Tags
+.run-on-do-docker: &run-on-do-docker
+  tags:
+    - digitalocean
+    - docker
+
+.before-script: &before-script
+  before_script:
+    - composer -V
+    - composer self-update
+    - composer install --no-ansi --no-interaction --no-progress --no-scripts
+
+deploy:
+  <<: *run-on-do-docker
+  image: alpine
+  stage: 🚀 deploy
+  only:
+    - tags
+  script:
+    - apk add --update --no-cache curl
+    - 'curl --header "Job-Token: $CI_JOB_TOKEN" --data tag=$CI_COMMIT_REF_NAME "https://git.cloud.hsoww.net/api/v4/projects/$CI_PROJECT_ID/packages/composer"'

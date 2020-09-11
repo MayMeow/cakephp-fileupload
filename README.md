@@ -6,6 +6,22 @@ You can install this plugin into your CakePHP application using [composer](https
 
 The recommended way to install composer packages is:
 
+## From packagist
+
+```
+composer require maymeow/file-upload
+```
+
+## From my server
+
+Add to `composer.json` following repository
+
+```json
+{"type":"composer","url":"https://git.cloud.hsoww.net/api/v4/group/121/-/packages/composer/packages.json"}
+```
+
+then run
+
 ```
 composer require maymeow/file-upload
 ```

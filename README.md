@@ -6,13 +6,13 @@ You can install this plugin into your CakePHP application using [composer](https
 
 The recommended way to install composer packages is:
 
-## From packagist
+## 🐘 From packagist
 
 ```
 composer require maymeow/file-upload
 ```
 
-## From my server
+## 🛡 From my server
 
 Add to `composer.json` following repository
 
@@ -96,3 +96,18 @@ public function add()
     $this->set(compact('file'));
 }
 ```
+
+## 🎯 Direction
+
+* [x] Configurable field name
+* [x] Configurable path to storage
+* [x] Allowed file types
+* [ ] Multiple file upload
+* [ ] File Size
+* [ ] Factory with most common file types
+
+💡 If you have more ideas then you can post issue on porect's GitHub page.
+
+## License
+
+MIT

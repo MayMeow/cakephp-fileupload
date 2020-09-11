@@ -1,5 +1,5 @@
 {
-    "name": "your-name-here/file-upload",
+    "name": "maymeow/file-upload",
     "description": "FileUpload plugin for CakePHP",
     "type": "cakephp-plugin",
     "license": "MIT",

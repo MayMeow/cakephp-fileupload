@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace FileUpload\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\ServerRequest;
 use Psr\Http\Message\UploadedFileInterface;
@@ -22,15 +21,15 @@ class UploadComponent extends Component
     protected $_defaultConfig = [
         'fieldName' => 'uploaded_file',
         'storagePath' => ROOT . DS . 'storage' . DS,
-        'allowedFileTypes' => '*'
+        'allowedFileTypes' => '*',
     ];
 
     /**
      * Move uploaded file to storage
      */
-    public function getFile(ServerRequest $serverRequest) : UploadedFileInterface
+    public function getFile(ServerRequest $serverRequest): UploadedFileInterface
     {
-        /** @var UploadedFileInterface */
+        /** @var \Psr\Http\Message\UploadedFileInterface */
         $fileObject = $serverRequest->getData($this->getConfig('fieldName'));
 
         if ($this->_isAllowedFileType($fileObject->getClientMediaType())) {
@@ -45,9 +44,11 @@ class UploadComponent extends Component
     /**
      * Check if file type is allowd
      */
-    private function _isAllowedFileType(string $fileType) : bool
+    private function _isAllowedFileType(string $fileType): bool
     {
-        if ($this->getConfig('allowedFileTypes') == "*") return true;
+        if ($this->getConfig('allowedFileTypes') == '*') {
+            return true;
+        }
 
         if (is_array($this->getConfig('allowedFileTypes'))) {
             if (in_array($fileType, $this->getConfig('allowedFileTypes'))) {

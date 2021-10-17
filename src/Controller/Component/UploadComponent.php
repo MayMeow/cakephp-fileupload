@@ -25,11 +25,12 @@ class UploadComponent extends Component
     ];
 
     /**
-     * Move uploaded file to storage
+     * @param \Cake\Http\ServerRequest $serverRequest Server Request
+     * @return \Psr\Http\Message\UploadedFileInterface
      */
     public function getFile(ServerRequest $serverRequest): UploadedFileInterface
     {
-        /** @var \Psr\Http\Message\UploadedFileInterface */
+        /** @var \Psr\Http\Message\UploadedFileInterface $fileObject */
         $fileObject = $serverRequest->getData($this->getConfig('fieldName'));
 
         if ($this->_isAllowedFileType($fileObject->getClientMediaType())) {
@@ -42,7 +43,8 @@ class UploadComponent extends Component
     }
 
     /**
-     * Check if file type is allowd
+     * @param string $fileType Type of the file
+     * @return bool
      */
     private function _isAllowedFileType(string $fileType): bool
     {

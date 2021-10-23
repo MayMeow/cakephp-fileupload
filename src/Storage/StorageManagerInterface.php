@@ -14,10 +14,14 @@ interface StorageManagerInterface
     public function __construct(StorageConfigInterface $config);
 
     /**
-     * @param \Psr\Http\Message\UploadedFileInterface $fileObject
+     * @param \Psr\Http\Message\UploadedFileInterface $fileObject UploadedFile Object
      * @return \FileUpload\File\StoredFileInterface
      */
     public function put(UploadedFileInterface $fileObject): StoredFileInterface;
 
+    /**
+     * @param string $fileName File name without slashes
+     * @return \FileUpload\File\StoredFileInterface
+     */
     public function pull(string $fileName): StoredFileInterface;
 }

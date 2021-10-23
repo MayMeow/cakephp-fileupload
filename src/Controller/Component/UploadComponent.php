@@ -38,8 +38,10 @@ class UploadComponent extends Component implements StorageConfigInterface
     ];
 
     /**
+     * Uploading File to storage and returns info of that file
+     *
      * @param \Cake\Http\ServerRequest $serverRequest Server Request
-     * @return \FileUpload\File\StoredFileInterface
+     * @return \FileUpload\File\StoredFileInterface Stored file info
      * @throws \HttpException
      */
     public function getFile(ServerRequest $serverRequest): StoredFileInterface

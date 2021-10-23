@@ -24,7 +24,8 @@ class UploadedFile implements StoredFileInterface
     }
 
     /**
-     * @param mixed $fileName
+     * @param mixed $fileName File name
+     * @return void
      */
     public function setFileName($fileName): void
     {
@@ -43,7 +44,8 @@ class UploadedFile implements StoredFileInterface
     }
 
     /**
-     * @param mixed $path
+     * @param mixed $path Path to file without filename
+     * @return void
      */
     public function setPath($path): void
     {
@@ -51,7 +53,7 @@ class UploadedFile implements StoredFileInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getStorageType(): string
     {
@@ -59,9 +61,10 @@ class UploadedFile implements StoredFileInterface
     }
 
     /**
-     * @param mixed $storageType
+     * @param string $storageType Storage type
+     * @return void
      */
-    public function setStorageType($storageType): void
+    public function setStorageType(string $storageType): void
     {
         $this->storageType = $storageType;
     }
@@ -74,11 +77,18 @@ class UploadedFile implements StoredFileInterface
         return $this->fileType;
     }
 
-    public function setFileContent($fileContent)
+    /**
+     * @param string $fileContent Content of file
+     * @return void
+     */
+    public function setFileContent(string $fileContent)
     {
         $this->fileContent = $fileContent;
     }
 
+    /**
+     * @return string
+     */
     public function getFileContent(): string
     {
         return $this->fileContent;

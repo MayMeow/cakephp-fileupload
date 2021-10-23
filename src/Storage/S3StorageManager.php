@@ -21,12 +21,21 @@ class S3StorageManager implements StorageManagerInterface
      */
     protected $awsClient;
 
+    /**
+     * @param \FileUpload\Storage\StorageConfigInterface $config Configuration for storage manager
+     */
     public function __construct(StorageConfigInterface $config)
     {
         $this->configuration = $config;
         $this->awsClient = $this->getAwsClient();
     }
 
+    /**
+     * Uploada file to storage
+     *
+     * @param \Psr\Http\Message\UploadedFileInterface $fileObject Uploaded file object
+     * @return \FileUpload\File\StoredFileInterface
+     */
     public function put(UploadedFileInterface $fileObject): StoredFileInterface
     {
         $this->awsClient->putObject([
@@ -43,11 +52,22 @@ class S3StorageManager implements StorageManagerInterface
         return $uploadedFile;
     }
 
+    /**
+     * Initializing S3 Client from configuration
+     *
+     * @return \Aws\S3\S3Client S3 client instance
+     */
     protected function getAwsClient(): S3Client
     {
         return new S3Client(Configure::read('S3'));
     }
 
+    /**
+     * Download file from storage
+     *
+     * @param string $fileName File name without slashes
+     * @return \FileUpload\File\StoredFileInterface
+     */
     public function pull(string $fileName): StoredFileInterface
     {
         $downloadedFile = $this->awsClient->getObject([

@@ -26,6 +26,12 @@ class DownloadComponent extends Component implements StorageConfigInterface
         'storage_type' => 'local',
     ];
 
+    /**
+     * Returns stored file info and content
+     *
+     * @param string $fileName Name of file without path or slashes
+     * @return \FileUpload\File\StoredFileInterface Stored file object
+     */
     public function getFile(string $fileName): StoredFileInterface
     {
         /** check if storage is s3. Local storage is default one */

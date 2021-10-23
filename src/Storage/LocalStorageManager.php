@@ -14,13 +14,18 @@ class LocalStorageManager implements StorageManagerInterface
      */
     protected $configuration;
 
+    /**
+     * @param \FileUpload\Storage\StorageConfigInterface $config Configuration for storage manager
+     */
     public function __construct(StorageConfigInterface $config)
     {
         $this->configuration = $config;
     }
 
     /**
-     * @param \Psr\Http\Message\UploadedFileInterface $fileObject
+     * Upload file to storage
+     *
+     * @param \Psr\Http\Message\UploadedFileInterface $fileObject Uploaded file object
      * @return \FileUpload\File\StoredFileInterface
      */
     public function put(UploadedFileInterface $fileObject): StoredFileInterface
@@ -36,7 +41,9 @@ class LocalStorageManager implements StorageManagerInterface
     }
 
     /**
-     * @param string $fileName
+     * Download file from storage
+     *
+     * @param string $fileName Filename without slashes
      * @return \FileUpload\File\StoredFileInterface
      */
     public function pull(string $fileName): StoredFileInterface

@@ -1,5 +1,12 @@
 # 🆙 FileUpload plugin for CakePHP
 
+Cakephp plugin to upload files to storage and download them. Currently are supported:
+
+- Local storage
+- S3 Compatible storage
+
+And supported actions are upload and download.
+
 ## Installation
 
 You can install this plugin into your CakePHP application using [composer](https://getcomposer.org).
@@ -7,20 +14,6 @@ You can install this plugin into your CakePHP application using [composer](https
 The recommended way to install composer packages is:
 
 ## 🐘 From packagist
-
-```
-composer require maymeow/file-upload
-```
-
-## 🛡 From my server
-
-Add to `composer.json` following repository
-
-```json
-{"type":"composer","url":"https://git.cloud.hsoww.net/api/v4/group/121/-/packages/composer/packages.json"}
-```
-
-then run
 
 ```
 composer require maymeow/file-upload
@@ -41,10 +34,17 @@ public function initialize(): void
 {
     parent::initialize();
     $this->loadComponent('FileUpload.Upload');
+    $this->loadComponent('FileUpload.Dowmload'); // in case you wan to download files
 }
 ```
 
-Or you can change them
+## Using local storage
+
+Commands above are loaded with default configuration:
+- Using Local filesystem: type is set to `local`
+- Data are stored in `sotrage` folder in root of your application - This folder is not public and cannot be served directly from webserver. You need to use `DownloadComponent` to get files
+- Field name for uploading files is `uploaded_file`
+- Allowed are all file types
 
 ```php
 public function initialize(): void
@@ -60,40 +60,95 @@ public function initialize(): void
 
 For `allowedFileTypes` use `'allowedFileTypes' => '*'` for all file types or `'allowedFileTypes' => ['type1', 'type2']` for your expected file types. If file have not allowed type Component will throw `Cake\Http\Exception\HttpException`.
 
-Usage in function
+Using local storage (default option) you can use default config but do not forge to change allowed file types and form field nam from which you uploading file to server.
+
+## Using S3 storage
+
+For S3 storage configuration is pretty same as configuration above, but you have to change type to `s3` instead of `local` which is default as follows
 
 ```php
-public function add()
+public function initialize(): void
 {
-    $file = $this->Files->newEmptyEntity();
+    parent::initialize();
+    $this->loadComponent('FileUpload.Upload', [
+        'fieldName' => 'your_form_file_field',
+        'storagePath' => 'bucket_name',
+        'storage_type' => 's3'
+    ]);
+}
+```
+
+:exclamation: Dont forget to change configuration for `DownloadComponent` too if you planing using it.
+
+Next add configuration for s3 server to your config file `app_local.php` for example as follows:
+
+```php
+'S3' => [
+    'version' => 'latest',
+    'region'  => 'us-east-1',
+    'endpoint' => 'http://cake_minio:9000',
+    'use_path_style_endpoint' => true,
+    'credentials' => [
+        'key'    => 'minioadmin',
+        'secret' => 'minioadmin',
+    ],
+]
+```
+
+Config above is for using minio with my [CakePHP starte kit](https://github.com/MayMeow/cakephp-starter-kit). Change it for your needs.
+
+
+## Uploading files
+
+
+```php
+/**
+ * @throws \HttpException
+ * @return \Cake\Http\Response|null|void
+ */
+public function upload()
+{
+    $uploadForm = new UploadForm();
 
     if ($this->request->is('post')) {
-        
-        // you can use try catch to show Flash instead of error page
-        try {
-            // Get Uploaded file details
-            $fileObject = $this->Upload->getFile($this->request);   
+        $uploadedFile = $this->Upload->getFile($this->request);
 
-            $file = $this->Files->patchEntity($file, $this->request->getData());
+        // Create new Entity and store info about uploaded file
+        $file = $this->Files->newEmptyEntity();
 
-            // Update Model and write it
-            $file->name = $fileObject->getClientFilename();
-            $file->size = $fileObject->getSize();
-            $file->path = $fileObject->getClientFilename();
-            $file->updated = Date::now();
+        $file->name = $uploadedFile->getFileName();
+        $file->path = $uploadedFile->getPath();
 
-            if ($this->Files->save($file)) {
-                $this->Flash->success(__('The file has been saved.'));
+        $this->Files->save($file);
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The file could not be saved. Please, try again.'));
-
-        } catch (HttpException $e) {
-            $this->Flash->error($e->getMessage());
-        }
+        return $this->redirect($this->referer());
     }
-    $this->set(compact('file'));
+
+    $this->set(compact('uploadForm'));
+}
+```
+
+## Downloading files
+
+
+```php
+/**
+ * @param string $fileName
+ * @return \Cake\Http\Response|void
+ */
+public function download($fileName)
+{
+    $downloadedFile = $this->Download->getFile($fileName);
+
+    $response = $this->response;
+    $response = $response->withStringBody($downloadedFile->getFileContent());
+    $response = $response->withType($downloadedFile->getFileType());
+
+    if ($this->request->getParam('?.download') == true) {
+        $response = $response->withDownload($fileName);
+    }
+
+    return $response;
 }
 ```
 
@@ -102,9 +157,9 @@ public function add()
 * [x] Configurable field name
 * [x] Configurable path to storage
 * [x] Allowed file types
+* [x] Add S3 Support
 * [ ] Multiple file upload
 * [ ] File Size
-* [ ] Factory with most common file types
 
 💡 If you have more ideas then you can post issue on porect's GitHub page.
 

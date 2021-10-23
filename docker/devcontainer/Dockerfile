@@ -1,5 +1,7 @@
 FROM ghcr.io/maymeow/php-ci-cd/php-ci-cd:7.4.16-cs-1
 
+# RUN apt update && apt install -y git
+
 # arguments in docker-compose file
 ARG user=vscode
 ARG uid=1000

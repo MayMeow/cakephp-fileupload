@@ -5,18 +5,33 @@ namespace FileUpload\File;
 
 class UploadedFile implements StoredFileInterface
 {
+    /**
+     * @var string $fileName
+     */
     protected $fileName;
 
+    /**
+     * @var string $path
+     */
     protected $path;
 
+    /**
+     * @var string $storageType
+     */
     protected $storageType;
 
+    /**
+     * @var string $fileType
+     */
     protected $fileType;
 
+    /**
+     * @var string $fileContent
+     */
     protected $fileContent;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFileName(): string
     {
@@ -24,19 +39,20 @@ class UploadedFile implements StoredFileInterface
     }
 
     /**
-     * @param mixed $fileName File name
+     * @param string $fileName File name
      * @return void
      */
     public function setFileName($fileName): void
     {
         $this->fileName = $fileName;
 
+        /** @var string[] $pathInfo */
         $pathInfo = pathinfo($fileName);
         $this->fileType = $pathInfo['extension'];
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPath(): string
     {
@@ -44,10 +60,10 @@ class UploadedFile implements StoredFileInterface
     }
 
     /**
-     * @param mixed $path Path to file without filename
+     * @param string $path Path to file without filename
      * @return void
      */
-    public function setPath($path): void
+    public function setPath(string $path): void
     {
         $this->path = $path;
     }
@@ -70,7 +86,7 @@ class UploadedFile implements StoredFileInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFileType(): string
     {

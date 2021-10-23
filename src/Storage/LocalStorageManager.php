@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FileUpload\Storage;
 
+use FileUpload\Exceptions\FileContentException;
 use FileUpload\File\StoredFileInterface;
 use FileUpload\File\UploadedFile;
 use Psr\Http\Message\UploadedFileInterface;
@@ -45,10 +46,15 @@ class LocalStorageManager implements StorageManagerInterface
      *
      * @param string $fileName Filename without slashes
      * @return \FileUpload\File\StoredFileInterface
+     * @throws \FileUpload\Exceptions\FileContentException
      */
     public function pull(string $fileName): StoredFileInterface
     {
         $fileContent = file_get_contents($this->configuration->getConfig('storagePath') . $fileName);
+
+        if ($fileContent == false) {
+            throw new FileContentException();
+        }
 
         $uploadedFile = new UploadedFile();
         $uploadedFile->setFileName($fileName);

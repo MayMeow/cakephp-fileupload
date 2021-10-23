@@ -26,9 +26,9 @@ class UploadComponent extends Component implements StorageConfigInterface
      */
     protected $_defaultConfig = [
         'fieldName' => 'uploaded_file',
-        'storagePath' => 'cake.upload',
+        'storagePath' => ROOT . DS . 'storage' . DS ,
         'allowedFileTypes' => '*',
-        'storage_type' => "s3"
+        'storage_type' => "local"
     ];
 
     /**

@@ -22,12 +22,12 @@ class DownloadComponent extends Component implements StorageConfigInterface
      */
     protected $_defaultConfig = [
         'fieldName' => 'uploaded_file',
-        'storagePath' => 'cake.upload',
+        'storagePath' => ROOT . DS . 'storage' . DS ,
         'allowedFileTypes' => '*',
-        'storage_type' => "s3"
+        'storage_type' => "local"
     ];
 
-    public function getFile($fileName) : StoredFileInterface
+    public function getFile(string $fileName) : StoredFileInterface
     {
         /** check if storage is s3. Local storage is default one */
         if ($this->getConfig('storage_type') == 's3') {

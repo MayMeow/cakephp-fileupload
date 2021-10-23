@@ -3,16 +3,13 @@ declare(strict_types=1);
 
 namespace FileUpload\Controller\Component;
 
-use Aws\S3\S3Client;
 use Cake\Controller\Component;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\ServerRequest;
 use FileUpload\File\StoredFileInterface;
-use FileUpload\File\UploadedFile;
 use FileUpload\Storage\LocalStorageManager;
 use FileUpload\Storage\S3StorageManager;
 use FileUpload\Storage\StorageConfigInterface;
-use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Upload component
@@ -28,7 +25,7 @@ class UploadComponent extends Component implements StorageConfigInterface
         'fieldName' => 'uploaded_file',
         'storagePath' => ROOT . DS . 'storage' . DS ,
         'allowedFileTypes' => '*',
-        'storage_type' => "local"
+        'storage_type' => 'local',
     ];
 
     /**
@@ -37,7 +34,7 @@ class UploadComponent extends Component implements StorageConfigInterface
      * @var string[]
      */
     protected $_allowedStorageTypes = [
-        'local', 's3'
+        'local', 's3',
     ];
 
     /**

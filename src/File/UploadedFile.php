@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FileUpload\File;
 
@@ -17,7 +18,7 @@ class UploadedFile implements StoredFileInterface
     /**
      * @return mixed
      */
-    public function getFileName() : string
+    public function getFileName(): string
     {
         return $this->fileName;
     }
@@ -36,7 +37,7 @@ class UploadedFile implements StoredFileInterface
     /**
      * @return mixed
      */
-    public function getPath() : string
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -52,7 +53,7 @@ class UploadedFile implements StoredFileInterface
     /**
      * @return mixed
      */
-    public function getStorageType() : string
+    public function getStorageType(): string
     {
         return $this->storageType;
     }
@@ -68,7 +69,7 @@ class UploadedFile implements StoredFileInterface
     /**
      * @return mixed
      */
-    public function getFileType() : string
+    public function getFileType(): string
     {
         return $this->fileType;
     }

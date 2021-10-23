@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FileUpload\Storage;
 
@@ -9,7 +10,7 @@ use Psr\Http\Message\UploadedFileInterface;
 class LocalStorageManager implements StorageManagerInterface
 {
     /**
-     * @var StorageConfigInterface
+     * @var \FileUpload\Storage\StorageConfigInterface
      */
     protected $configuration;
 
@@ -19,10 +20,10 @@ class LocalStorageManager implements StorageManagerInterface
     }
 
     /**
-     * @param UploadedFileInterface $fileObject
-     * @return StoredFileInterface
+     * @param \Psr\Http\Message\UploadedFileInterface $fileObject
+     * @return \FileUpload\File\StoredFileInterface
      */
-    public function put(UploadedFileInterface $fileObject) : StoredFileInterface
+    public function put(UploadedFileInterface $fileObject): StoredFileInterface
     {
         $fileObject->moveTo($this->configuration->getConfig('storagePath') . $fileObject->getClientFilename());
 
@@ -36,7 +37,7 @@ class LocalStorageManager implements StorageManagerInterface
 
     /**
      * @param string $fileName
-     * @return StoredFileInterface
+     * @return \FileUpload\File\StoredFileInterface
      */
     public function pull(string $fileName): StoredFileInterface
     {

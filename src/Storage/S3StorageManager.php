@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FileUpload\Storage;
 
@@ -11,11 +12,13 @@ use Psr\Http\Message\UploadedFileInterface;
 class S3StorageManager implements StorageManagerInterface
 {
     /**
-     * @var StorageConfigInterface
+     * @var \FileUpload\Storage\StorageConfigInterface
      */
     protected $configuration;
 
-    /** @var S3Client $awsClient */
+    /**
+     * @var \Aws\S3\S3Client $awsClient
+     */
     protected $awsClient;
 
     public function __construct(StorageConfigInterface $config)
@@ -24,12 +27,12 @@ class S3StorageManager implements StorageManagerInterface
         $this->awsClient = $this->getAwsClient();
     }
 
-    public function put(UploadedFileInterface $fileObject) : StoredFileInterface
+    public function put(UploadedFileInterface $fileObject): StoredFileInterface
     {
         $this->awsClient->putObject([
             'Bucket' => $this->configuration->getConfig('storagePath'),
             'Key' => $fileObject->getClientFilename(),
-            'Body' => $fileObject->getStream()
+            'Body' => $fileObject->getStream(),
         ]);
 
         $uploadedFile = new UploadedFile();
@@ -40,10 +43,9 @@ class S3StorageManager implements StorageManagerInterface
         return $uploadedFile;
     }
 
-    protected function getAwsClient() : S3Client
+    protected function getAwsClient(): S3Client
     {
         return new S3Client(Configure::read('S3'));
-
     }
 
     public function pull(string $fileName): StoredFileInterface
@@ -51,7 +53,7 @@ class S3StorageManager implements StorageManagerInterface
         $downloadedFile = $this->awsClient->getObject([
             'Bucket' => $this->configuration->getConfig('storagePath'),
             'Key' => $fileName,
-            'SaveAs' => $fileName . '_local'
+            'SaveAs' => $fileName . '_local',
         ]);
 
         $uploadedFile = new UploadedFile();

@@ -12,6 +12,8 @@ class UploadedFile implements StoredFileInterface
 
     protected $fileType;
 
+    protected $fileContent;
+
     /**
      * @return mixed
      */
@@ -71,4 +73,13 @@ class UploadedFile implements StoredFileInterface
         return $this->fileType;
     }
 
+    public function setFileContent($fileContent)
+    {
+        $this->fileContent = $fileContent;
+    }
+
+    public function getFileContent(): string
+    {
+        return $this->fileContent;
+    }
 }

@@ -45,4 +45,21 @@ class S3StorageManager implements StorageManagerInterface
         return new S3Client(Configure::read('S3'));
 
     }
+
+    public function pull(string $fileName): StoredFileInterface
+    {
+        $downloadedFile = $this->awsClient->getObject([
+            'Bucket' => $this->configuration->getConfig('storagePath'),
+            'Key' => $fileName,
+            'SaveAs' => $fileName . '_local'
+        ]);
+
+        $uploadedFile = new UploadedFile();
+        $uploadedFile->setFileName($fileName);
+        $uploadedFile->setPath($this->configuration->getConfig('storagePath'));
+        $uploadedFile->setStorageType($this->configuration->getConfig('storage_type'));
+        $uploadedFile->setFileContent($downloadedFile['Body']);
+
+        return $uploadedFile;
+    }
 }

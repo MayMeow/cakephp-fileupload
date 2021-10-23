@@ -18,4 +18,6 @@ interface StorageManagerInterface
      * @return \FileUpload\File\StoredFileInterface
      */
     public function put(UploadedFileInterface $fileObject) : StoredFileInterface;
+
+    public function pull(string $fileName) : StoredFileInterface;
 }

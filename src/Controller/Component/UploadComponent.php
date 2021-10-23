@@ -51,6 +51,7 @@ class UploadComponent extends Component implements StorageConfigInterface
             throw new \HttpException('Not allowed storage type');
         }
 
+        /** check if storage is s3. Local storage is default one */
         if ($this->getConfig('storage_type') == 's3') {
             $sm = new S3StorageManager($this);
         } else {
@@ -61,9 +62,7 @@ class UploadComponent extends Component implements StorageConfigInterface
         $fileObject = $serverRequest->getData($this->getConfig('fieldName'));
 
         if ($this->_isAllowedFileType($fileObject->getClientMediaType())) {
-            $storedFile = $sm->put($fileObject);
-
-            return $storedFile;
+            return $sm->put($fileObject);
         } else {
             throw new HttpException('Media type is not allowed');
         }

@@ -47,7 +47,7 @@ class UploadComponent extends Component implements StorageConfigInterface
     public function getFile(ServerRequest $serverRequest): StoredFileInterface
     {
         if (!in_array($this->getConfig('storage_type'), $this->_allowedStorageTypes)) {
-            throw new \HttpException('Not allowed storage type');
+            throw new \HttpException('Not supported storage type');
         }
 
         /** check if storage is s3. Local storage is default one */

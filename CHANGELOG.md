@@ -1,3 +1,13 @@
+v 1.1.2
+
+Bugfixes of release 1.1.0
+
+* FIX Convert stream to string before setting it to the filebody in S3StorageManager when downloading files
+
+# v 1.1.1
+
+Allow to use cakephp 4.x instead only 4.1.x
+
 # v 1.1.0
 
 Added support for S3 Compatible storage, Upload and download are now handling StorageManagers.

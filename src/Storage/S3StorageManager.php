@@ -80,7 +80,7 @@ class S3StorageManager implements StorageManagerInterface
         $uploadedFile->setFileName($fileName);
         $uploadedFile->setPath($this->configuration->getConfig('storagePath'));
         $uploadedFile->setStorageType($this->configuration->getConfig('storage_type'));
-        $uploadedFile->setFileContent($downloadedFile['Body']);
+        $uploadedFile->setFileContent((string)$downloadedFile['Body']);
 
         return $uploadedFile;
     }

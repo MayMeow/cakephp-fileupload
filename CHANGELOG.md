@@ -1,6 +1,6 @@
-v 1.1.0
+# v 1.1.0
 
-Added support for S3 Compatible storage
+Added support for S3 Compatible storage, Upload and download are now handling StorageManagers.
 
 * ADD Support for S3 Compatible storage
 * ADD new Component for Download files from storage

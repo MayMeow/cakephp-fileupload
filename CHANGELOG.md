@@ -1,4 +1,4 @@
-v 1.1.2
+# v 1.1.2
 
 Bugfixes of release 1.1.0
 

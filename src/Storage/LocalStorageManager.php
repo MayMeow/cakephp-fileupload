@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FileUpload\Storage;
 
+use FileUpload\File\PathUtils;
 use FileUpload\File\StoredFile;
 use FileUpload\File\StoredFileInterface;
 use FileUpload\File\UploadedFileDecorator;
@@ -19,10 +20,12 @@ class LocalStorageManager extends StorageManager
      */
     public function put(UploadedFileInterface $fileObject): UploadedFileDecorator
     {   
-        $fileObject->moveTo($this->getConfig('storagePath') . $fileObject->getClientFilename());
+        $fileName = PathUtils::fileNameSanitize($fileObject->getClientFilename());
+        $fileObject->moveTo($this->getConfig('storagePath') . $fileName);
 
         $uploadedFile = new UploadedFileDecorator($fileObject, self::STORAGE_TYPE, options: [
             'storagePath' => $this->getConfig('storagePath'),
+            'fileName' => $fileName,
         ]);
 
         return $uploadedFile;

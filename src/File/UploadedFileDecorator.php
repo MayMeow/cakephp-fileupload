@@ -28,4 +28,13 @@ class UploadedFileDecorator
     {
         return $this->options[$key] ?? "";
     }
+
+    public function getFileName(): string
+    {
+        if (isset($this->options['fileName'])) {
+            return $this->options['fileName'];
+        }
+
+        return $this->originalData->getClientFilename();
+    }
 }

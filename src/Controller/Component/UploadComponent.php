@@ -25,7 +25,7 @@ class UploadComponent extends Component
     ];
 
     /**
-     * Allowed storage types
+     * Allowed stoage types
      *
      * @var string[]
      */

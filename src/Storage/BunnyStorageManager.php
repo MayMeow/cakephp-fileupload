@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FileUpload\Storage;
 
+use FileUpload\File\PathUtils;
 use FileUpload\File\StoredFile;
 use FileUpload\File\StoredFileInterface;
 use FileUpload\File\UploadedFileDecorator;
@@ -22,7 +23,10 @@ final class BunnyStorageManager extends StorageManager
     {
         $accessKey = $this->getConfig('accessKey');
         $hostname = (!empty($this->getConfig('region'))) ? $this->getConfig('region') . '.' . $this->getConfig('baseHostName') : $this->getConfig('baseHostName');
-        $url = $this->composeUrl($hostname, $this->getConfig('storageZone'), $this->getConfig('storageZonePath'), $fileObject->getClientFilename());
+
+        $fileName = PathUtils::fileNameSanitize($fileObject->getClientFilename());
+
+        $url = $this->composeUrl($hostname, $this->getConfig('storageZone'), $this->getConfig('storageZonePath'), $fileName);
 
         $ch = curl_init();
 
@@ -49,7 +53,8 @@ final class BunnyStorageManager extends StorageManager
         }
 
         $file = new UploadedFileDecorator($fileObject, self::STORAGE_TYPE, [
-            'storagePath' => $this->composeUrl($this->getConfig('cdnDomain'))
+            'storagePath' => $this->composeUrl($this->getConfig('cdnDomain'), $this->getConfig('storageZonePath')),
+            'fileName' => $fileName,
         ]);
 
         return $file;

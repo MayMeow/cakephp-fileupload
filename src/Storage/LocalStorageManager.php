@@ -3,12 +3,9 @@ declare(strict_types=1);
 
 namespace FileUpload\Storage;
 
-use FileUpload\Exceptions\FileContentException;
 use FileUpload\File\StoredFile;
 use FileUpload\File\StoredFileInterface;
-use FileUpload\File\UploadedFile;
 use FileUpload\File\UploadedFileDecorator;
-use Laminas\Diactoros\UploadedFile as DiactorosUploadedFile;
 use Psr\Http\Message\UploadedFileInterface;
 
 class LocalStorageManager extends StorageManager
@@ -19,7 +16,6 @@ class LocalStorageManager extends StorageManager
      * Upload file to storage
      *
      * @param \Psr\Http\Message\UploadedFileInterface $fileObject Uploaded file object
-     * @return \FileUpload\File\StoredFileInterface
      */
     public function put(UploadedFileInterface $fileObject): UploadedFileDecorator
     {   

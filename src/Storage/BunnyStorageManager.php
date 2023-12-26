@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace FileUpload\Storage;
 
-use Cake\Http\Client\Response;
 use FileUpload\File\StoredFile;
 use FileUpload\File\StoredFileInterface;
-use FileUpload\File\UploadedFile;
 use FileUpload\File\UploadedFileDecorator;
 use Psr\Http\Message\UploadedFileInterface;
 

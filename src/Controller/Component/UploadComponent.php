@@ -6,7 +6,6 @@ namespace FileUpload\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Http\Exception\HttpException;
-use Cake\Http\ServerRequest;
 use FileUpload\File\UploadedFileDecorator;
 use FileUpload\Storage\StorageManagerInterface;
 
@@ -38,7 +37,6 @@ class UploadComponent extends Component
      * Uploading File to storage and returns info of that file
      *
      * @param \Cake\Http\ServerRequest $serverRequest Server Request
-     * @return \FileUpload\File\StoredFileInterface Stored file info
      * @throws HttpException
      */
     public function getFile(Controller $controller): UploadedFileDecorator

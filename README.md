@@ -1,9 +1,14 @@
 # 🆙 FileUpload plugin for CakePHP
 
-Cakephp plugin to upload files to storage and download them. Currently are supported:
+:warning: This is readme for version 2.x. For 1.x go to [v1.1.2](https://github.com/MayMeow/cakephp-fileupload/tree/v1.1.2) release.
 
-- Local storage
-- S3 Compatible storage
+### :stop_sign: Breaking changes (read before use)
+
+Version 2.x is not compatibile with cakephp lower than 5.x and it is not backward compatibile with previous releases of this plugins.
+
+- S3 storage support was removed (will be added in future relases)
+- Bunny CND storage support was added
+- All components and Managers was rewritten.
 
 And supported actions are upload and download.
 
@@ -16,152 +21,92 @@ The recommended way to install composer packages is:
 ## 🐘 From packagist
 
 ```
-composer require maymeow/file-upload
+composer require maymeow/file-upload "^2.0.0"
 ```
 
 ## Usage
 
-To load plugin addd to `Application.php`
+Add configuration somewhere to your config files
 
 ```php
-$this->addPlugin('FileUpload');
-```
-
-Next load it in controllers where you want to use it. To use default config
-
-```php
-public function initialize(): void
-{
-    parent::initialize();
-    $this->loadComponent('FileUpload.Upload');
-    $this->loadComponent('FileUpload.Dowmload'); // in case you wan to download files
-}
-```
-
-## Using local storage
-
-Commands above are loaded with default configuration:
-- Using Local filesystem: type is set to `local`
-- Data are stored in `sotrage` folder in root of your application - This folder is not public and cannot be served directly from webserver. You need to use `DownloadComponent` to get files
-- Field name for uploading files is `uploaded_file`
-- Allowed are all file types
-
-```php
-public function initialize(): void
-{
-    parent::initialize();
-    $this->loadComponent('FileUpload.Upload', [
-        'fieldName' => 'your_form_file_field',
-        'storagePath' => 'path_to_storage',
-        'allowedFileTypes' => '*'
-    ]);
-}
-```
-
-For `allowedFileTypes` use `'allowedFileTypes' => '*'` for all file types or `'allowedFileTypes' => ['type1', 'type2']` for your expected file types. If file have not allowed type Component will throw `Cake\Http\Exception\HttpException`.
-
-Using local storage (default option) you can use default config but do not forge to change allowed file types and form field nam from which you uploading file to server.
-
-## Using S3 storage
-
-For S3 storage configuration is pretty same as configuration above, but you have to change type to `s3` instead of `local` which is default as follows
-
-```php
-public function initialize(): void
-{
-    parent::initialize();
-    $this->loadComponent('FileUpload.Upload', [
-        'fieldName' => 'your_form_file_field',
-        'storagePath' => 'bucket_name',
-        'storage_type' => 's3'
-    ]);
-}
-```
-
-:exclamation: Dont forget to change configuration for `DownloadComponent` too if you planing using it.
-
-Next add configuration for s3 server to your config file `app_local.php` for example as follows:
-
-```php
-'S3' => [
-    'version' => 'latest',
-    'region'  => 'us-east-1',
-    'endpoint' => 'http://cake_minio:9000',
-    'use_path_style_endpoint' => true,
-    'credentials' => [
-        'key'    => 'minioadmin',
-        'secret' => 'minioadmin',
+'Storage' => [
+    'defaultStorageType' => env('STORAGE_DEFAULT_STORAGE_TYPE', 'local'),
+    'local' => [
+        'managerClass' => LocalStorageManager::class,
+        'storagePath' => env('STORAGE_LOCAL_STORAGE_PATH', ROOT . DS . 'storage' . DS),
     ],
+    'bunny' => [
+        'managerClass' => BunnyStorageManager::class,
+        'cdnDomain' => env('BUNNY_STORAGE_CDN_DOMAIN', ''), // your cnd url
+        'region' => env('BUNNY_STORAGE_REGION', ''), // region, empty is DE
+        'baseHostName' => 'storage.bunnycdn.com', // base host name not changeable
+        'storageZone' => env('BUNNY_STORAGE_ZONE', ''), // your storage zone name
+        'storageZonePath' => env('BUNNY_STORAGE_ZONE_PATH', ''), // folder in zono
+        'accessKey' => env('BUNNY_STORAGE_ACCESS_KEY', ''), // API key for write access
+    ]
 ]
 ```
 
-Config above is for using minio with my [CakePHP starte kit](https://github.com/MayMeow/cakephp-starter-kit). Change it for your needs.
+For bunny cdn minimal configuration is to have folowing keys configured
 
-
-## Uploading files
-
-
-```php
-/**
- * @throws \HttpException
- * @return \Cake\Http\Response|null|void
- */
-public function upload()
-{
-    $uploadForm = new UploadForm();
-
-    if ($this->request->is('post')) {
-        $uploadedFile = $this->Upload->getFile($this->request);
-
-        // Create new Entity and store info about uploaded file
-        $file = $this->Files->newEmptyEntity();
-
-        $file->name = $uploadedFile->getFileName();
-        $file->path = $uploadedFile->getPath();
-
-        $this->Files->save($file);
-
-        return $this->redirect($this->referer());
-    }
-
-    $this->set(compact('uploadForm'));
-}
+```ini
+BUNNY_STORAGE_ACCESS_KEY=
+BUNNY_STORAGE_CDN_DOMAIN=
+BUNNY_STORAGE_ZONE=
 ```
 
-## Downloading files
+If you need/want nginx to server your static files without PHP set `STORAGE_LOCAL_STORAGE_PATH` location to whe webroot folder.
 
+Load plugin with adding
 
 ```php
-/**
- * @param string $fileName
- * @return \Cake\Http\Response|void
- */
-public function download($fileName)
-{
-    $downloadedFile = $this->Download->getFile($fileName);
-
-    $response = $this->response;
-    $response = $response->withStringBody($downloadedFile->getFileContent());
-    $response = $response->withType($downloadedFile->getFileType());
-
-    if ($this->request->getParam('?.download') == true) {
-        $response = $response->withDownload($fileName);
-    }
-
-    return $response;
-}
+$this->addPlugin('FileUpload'); // in your Application.php bootstrap function
 ```
 
-## 🎯 Direction
+or you can add your plugin with `plugins.php` config file
 
-* [x] Configurable field name
-* [x] Configurable path to storage
-* [x] Allowed file types
-* [x] Add S3 Support
-* [ ] Multiple file upload
-* [ ] File Size
+```php
+return [
+    // .. your other plugins
+    'FileUpload' => [],
+];
+```
 
-💡 If you have more ideas then you can post issue on porect's GitHub page.
+Loading components
+
+```php
+$config = Configure::read('Storage.local'); // or Storage.bunny
+
+// or by setting it with .env STORAGE_DEFAULT_STORAGE_TYPE
+$storageType = Configure::read('Storage.defaultStorageType');
+$config = Configure::read('Storage.' . $storageType); 
+
+$this->loadComponent('FileUpload.Upload', $config);
+$this->loadComponent('FileUpload.Download', $config);
+```
+
+Uploading files
+
+```php
+$file = $this->Upload->getFile($this);
+// do something with file
+
+// store your file name in database
+$file->getFileName(); // sanitized file name - with removed restricted characters in the name
+```
+
+```php
+$file = $this->Download->getFile($resource->name);
+// do something with file
+```
+
+:memo: Note that the function above will read content of file and you then need to use response to push it to the viewer. If you want to do it without using PHP you will need to get URL of file and if you using local storage manager your folder need to be in webrootfolder.
+
+```php
+$file->get('storagePath'); // local: /patht/to/sorage or bunny: https://cdn.your.tld/path/to/folder/
+// combine it with filename from your database go download it
+```
+
 
 ## License
 

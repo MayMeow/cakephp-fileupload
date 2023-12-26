@@ -5,8 +5,6 @@ namespace FileUpload\Controller\Component;
 
 use Cake\Controller\Component;
 use FileUpload\File\StoredFileInterface;
-use FileUpload\Storage\LocalStorageManager;
-use FileUpload\Storage\S3StorageManager;
 use FileUpload\Storage\StorageManagerInterface;
 
 /**

@@ -54,23 +54,4 @@ class UploadComponent extends Component
 
         return new $sm($this->getConfig());
     }
-
-    /**
-     * @param string $fileType Type of the file
-     * @return bool
-     */
-    private function _isAllowedFileType(string $fileType): bool
-    {
-        if ($this->getConfig('allowedFileTypes') == '*') {
-            return true;
-        }
-
-        if (is_array($this->getConfig('allowedFileTypes'))) {
-            if (in_array($fileType, $this->getConfig('allowedFileTypes'))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

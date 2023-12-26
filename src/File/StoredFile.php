@@ -5,6 +5,7 @@ namespace FileUpload\File;
 
 class StoredFile implements StoredFileInterface
 {
+    protected string $mimeType;
     public function __construct(
         protected string $file,
     ) {
@@ -13,11 +14,17 @@ class StoredFile implements StoredFileInterface
     public function getContent(): string    
     {
         $stream = fopen($this->file, 'rb');
-        return stream_get_contents($stream);
+        $content = stream_get_contents($stream);
+
+        $finfo = finfo_open();
+        $this->mimeType = finfo_buffer($finfo, $content, FILEINFO_MIME_TYPE);
+        finfo_close($finfo);
+
+        return $content;
     }
 
     public function getMimeType(): string
     {
-        return mime_content_type($this->file);
+        return $this->mimeType;
     }
 }

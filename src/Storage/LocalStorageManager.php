@@ -4,24 +4,16 @@ declare(strict_types=1);
 namespace FileUpload\Storage;
 
 use FileUpload\Exceptions\FileContentException;
+use FileUpload\File\StoredFile;
 use FileUpload\File\StoredFileInterface;
 use FileUpload\File\UploadedFile;
+use FileUpload\File\UploadedFileDecorator;
+use Laminas\Diactoros\UploadedFile as DiactorosUploadedFile;
 use Psr\Http\Message\UploadedFileInterface;
 
-class LocalStorageManager implements StorageManagerInterface
+class LocalStorageManager extends StorageManager
 {
-    /**
-     * @var \FileUpload\Storage\StorageConfigInterface
-     */
-    protected $configuration;
-
-    /**
-     * @param \FileUpload\Storage\StorageConfigInterface $config Configuration for storage manager
-     */
-    public function __construct(StorageConfigInterface $config)
-    {
-        $this->configuration = $config;
-    }
+    public const STORAGE_TYPE = 'local';
 
     /**
      * Upload file to storage
@@ -29,14 +21,13 @@ class LocalStorageManager implements StorageManagerInterface
      * @param \Psr\Http\Message\UploadedFileInterface $fileObject Uploaded file object
      * @return \FileUpload\File\StoredFileInterface
      */
-    public function put(UploadedFileInterface $fileObject): StoredFileInterface
-    {
-        $fileObject->moveTo($this->configuration->getConfig('storagePath') . $fileObject->getClientFilename());
+    public function put(UploadedFileInterface $fileObject): UploadedFileDecorator
+    {   
+        $fileObject->moveTo($this->getConfig('storagePath') . $fileObject->getClientFilename());
 
-        $uploadedFile = new UploadedFile();
-        $uploadedFile->setFileName($fileObject->getClientFilename());
-        $uploadedFile->setPath($this->configuration->getConfig('storagePath'));
-        $uploadedFile->setStorageType($this->configuration->getConfig('storage_type'));
+        $uploadedFile = new UploadedFileDecorator($fileObject, self::STORAGE_TYPE, options: [
+            'storagePath' => $this->getConfig('storagePath'),
+        ]);
 
         return $uploadedFile;
     }
@@ -50,18 +41,8 @@ class LocalStorageManager implements StorageManagerInterface
      */
     public function pull(string $fileName): StoredFileInterface
     {
-        $fileContent = file_get_contents($this->configuration->getConfig('storagePath') . $fileName);
+        $file = new StoredFile(file: $this->getConfig('storagePath') . $fileName);
 
-        if ($fileContent == false) {
-            throw new FileContentException();
-        }
-
-        $uploadedFile = new UploadedFile();
-        $uploadedFile->setFileName($fileName);
-        $uploadedFile->setPath($this->configuration->getConfig('storagePath'));
-        $uploadedFile->setStorageType($this->configuration->getConfig('storage_type'));
-        $uploadedFile->setFileContent($fileContent);
-
-        return $uploadedFile;
+        return $file;
     }
 }

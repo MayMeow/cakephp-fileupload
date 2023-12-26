@@ -4,20 +4,18 @@ declare(strict_types=1);
 namespace FileUpload\Storage;
 
 use FileUpload\File\StoredFileInterface;
+use FileUpload\File\UploadedFileDecorator;
 use Psr\Http\Message\UploadedFileInterface;
 
 interface StorageManagerInterface
 {
-    /**
-     * @param \FileUpload\Storage\StorageConfigInterface $config Configuration
-     */
-    public function __construct(StorageConfigInterface $config);
+    public function __construct(array $configurations = []);
 
     /**
      * @param \Psr\Http\Message\UploadedFileInterface $fileObject UploadedFile Object
      * @return \FileUpload\File\StoredFileInterface
      */
-    public function put(UploadedFileInterface $fileObject): StoredFileInterface;
+    public function put(UploadedFileInterface $fileObject): UploadedFileDecorator;
 
     /**
      * @param string $fileName File name without slashes

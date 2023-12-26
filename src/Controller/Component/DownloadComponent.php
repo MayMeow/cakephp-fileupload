@@ -7,23 +7,19 @@ use Cake\Controller\Component;
 use FileUpload\File\StoredFileInterface;
 use FileUpload\Storage\LocalStorageManager;
 use FileUpload\Storage\S3StorageManager;
-use FileUpload\Storage\StorageConfigInterface;
+use FileUpload\Storage\StorageManagerInterface;
 
 /**
  * Download component
  */
-class DownloadComponent extends Component implements StorageConfigInterface
+class DownloadComponent extends Component
 {
     /**
      * Default configuration.
      *
      * @var array
      */
-    protected $_defaultConfig = [
-        'fieldName' => 'uploaded_file',
-        'storagePath' => ROOT . DS . 'storage' . DS ,
-        'allowedFileTypes' => '*',
-        'storage_type' => 'local',
+    protected array $_defaultConfig = [
     ];
 
     /**
@@ -34,13 +30,15 @@ class DownloadComponent extends Component implements StorageConfigInterface
      */
     public function getFile(string $fileName): StoredFileInterface
     {
-        /** check if storage is s3. Local storage is default one */
-        if ($this->getConfig('storage_type') == 's3') {
-            $sm = new S3StorageManager($this);
-        } else {
-            $sm = new LocalStorageManager($this); // default one
-        }
+        $sm = $this->_getStorageManager();
 
         return $sm->pull($fileName);
+    }
+
+    protected function _getStorageManager(): StorageManagerInterface
+    {
+        $sm = $this->getConfig('managerClass');
+
+        return new $sm($this->getConfig());
     }
 }

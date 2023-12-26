@@ -4,28 +4,25 @@ declare(strict_types=1);
 namespace FileUpload\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Controller\Controller;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\ServerRequest;
-use FileUpload\File\StoredFileInterface;
-use FileUpload\Storage\LocalStorageManager;
-use FileUpload\Storage\S3StorageManager;
-use FileUpload\Storage\StorageConfigInterface;
+use FileUpload\File\UploadedFileDecorator;
+use FileUpload\Storage\StorageManagerInterface;
 
 /**
  * Upload component
  */
-class UploadComponent extends Component implements StorageConfigInterface
+class UploadComponent extends Component
 {
     /**
      * Default configuration.
      *
      * @var string[]
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'fieldName' => 'uploaded_file',
-        'storagePath' => ROOT . DS . 'storage' . DS ,
         'allowedFileTypes' => '*',
-        'storage_type' => 'local',
     ];
 
     /**
@@ -33,7 +30,7 @@ class UploadComponent extends Component implements StorageConfigInterface
      *
      * @var string[]
      */
-    protected $_allowedStorageTypes = [
+    protected array $_allowedStorageTypes = [
         'local', 's3',
     ];
 
@@ -42,29 +39,20 @@ class UploadComponent extends Component implements StorageConfigInterface
      *
      * @param \Cake\Http\ServerRequest $serverRequest Server Request
      * @return \FileUpload\File\StoredFileInterface Stored file info
-     * @throws \HttpException
+     * @throws HttpException
      */
-    public function getFile(ServerRequest $serverRequest): StoredFileInterface
+    public function getFile(Controller $controller): UploadedFileDecorator
     {
-        if (!in_array($this->getConfig('storage_type'), $this->_allowedStorageTypes)) {
-            throw new \HttpException('Not supported storage type');
-        }
+        $sm = $this->_getStorageManager();
 
-        /** check if storage is s3. Local storage is default one */
-        if ($this->getConfig('storage_type') == 's3') {
-            $sm = new S3StorageManager($this);
-        } else {
-            $sm = new LocalStorageManager($this); // default one
-        }
+        return $sm->put($controller->getRequest()->getData($this->getConfig('fieldName')));
+    }
 
-        /** @var \Psr\Http\Message\UploadedFileInterface $fileObject */
-        $fileObject = $serverRequest->getData($this->getConfig('fieldName'));
+    protected function _getStorageManager(): StorageManagerInterface
+    {
+        $sm = $this->getConfig('managerClass');
 
-        if ($this->_isAllowedFileType($fileObject->getClientMediaType())) {
-            return $sm->put($fileObject);
-        } else {
-            throw new HttpException('Media type is not allowed');
-        }
+        return new $sm($this->getConfig());
     }
 
     /**

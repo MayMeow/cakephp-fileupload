@@ -3,17 +3,15 @@ declare(strict_types=1);
 
 namespace FileUpload\Storage;
 
-use FileUpload\Exceptions\FileContentException;
 use FileUpload\File\StoredFile;
 use FileUpload\File\StoredFileInterface;
 use FileUpload\File\UploadedFile;
 use FileUpload\File\UploadedFileDecorator;
-use Laminas\Diactoros\UploadedFile as DiactorosUploadedFile;
 use Psr\Http\Message\UploadedFileInterface;
 
-class LocalStorageManager extends StorageManager
+final class BunnyStorageManager extends StorageManager
 {
-    public const STORAGE_TYPE = 'local';
+    public const STORAGE_TYPE = 'bunny';
 
     /**
      * Upload file to storage
@@ -22,14 +20,10 @@ class LocalStorageManager extends StorageManager
      * @return \FileUpload\File\StoredFileInterface
      */
     public function put(UploadedFileInterface $fileObject): UploadedFileDecorator
-    {   
-        $fileObject->moveTo($this->getConfig('storagePath') . $fileObject->getClientFilename());
+    {
+        $file = new UploadedFileDecorator($fileObject, self::STORAGE_TYPE);
 
-        $uploadedFile = new UploadedFileDecorator($fileObject, self::STORAGE_TYPE, options: [
-            'storagePath' => $this->getConfig('storagePath'),
-        ]);
-
-        return $uploadedFile;
+        return $file;
     }
 
     /**
@@ -41,8 +35,6 @@ class LocalStorageManager extends StorageManager
      */
     public function pull(string $fileName): StoredFileInterface
     {
-        $file = new StoredFile(file: $this->getConfig('storagePath') . $fileName);
-
-        return $file;
+        return new StoredFile(file: $fileName);
     }
 }

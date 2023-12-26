@@ -30,5 +30,10 @@
         "cs-check": "phpcs --colors -p  src/ tests/",
         "cs-fix": "phpcbf --colors -p src/ tests/",
         "stan": "phpstan analyse"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": false
+        }
     }
 }

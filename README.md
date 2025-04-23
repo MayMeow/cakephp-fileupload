@@ -1,16 +1,18 @@
 # 🆙 FileUpload plugin for CakePHP
 
-:warning: This is readme for version 2.x. For 1.x go to [v1.1.2](https://github.com/MayMeow/cakephp-fileupload/tree/v1.1.2) release.
+> [!NOTE]
+> This is readme for version 2.x. For 1.x go to [v1.1.2](https://github.com/MayMeow/cakephp-fileupload/tree/v1.1.2) release.
 
-### :stop_sign: Breaking changes (read before use)
-
-Version 2.x is not compatibile with cakephp lower than 5.x and it is not backward compatibile with previous releases of this plugins.
-
-- S3 storage support was removed (will be added in future relases)
-- Bunny CND storage support was added
-- All components and Managers was rewritten.
-
-And supported actions are upload and download.
+> [!CAUTION]
+> :stop_sign: Breaking changes (read before use)
+> 
+> Version 2.x is not compatibile with cakephp lower than 5.x and it is not backward compatibile with previous releases of this plugins.
+>
+> - S3 storage support was removed (will be added in future relases)
+> - Bunny CND storage support was added
+> - All components and Managers was rewritten.
+> 
+> And supported actions are upload and download.
 
 ## Installation
 

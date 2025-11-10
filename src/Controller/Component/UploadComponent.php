@@ -26,11 +26,6 @@ class UploadComponent extends Component
     ];
 
     /**
-     * Allowed stoage types
-     *
-     * @var string[]
-     */
-    /**
      * @var \FileUpload\Storage\StorageManagerInterface|null
      */
     private ?StorageManagerInterface $storageManager = null;

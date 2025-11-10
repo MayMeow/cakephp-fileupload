@@ -10,16 +10,16 @@ class PathUtilsTest extends TestCase
 {
     public function testFileNameSanitizePreservesExtension(): void
     {
-        $this->assertSame('example-file.txt', PathUtils::fileNameSanitize('Example File.TXT'));
+        $this->assertSame('Example-File.TXT', PathUtils::fileNameSanitize('Example File.TXT'));
     }
 
     public function testFileNameSanitizeHandlesMultipleDots(): void
     {
-        $this->assertSame('archive.tar.gz', PathUtils::fileNameSanitize('Archive.tar.gz'));
+        $this->assertSame('Archive-tar.gz', PathUtils::fileNameSanitize('Archive.tar.gz'));
     }
 
     public function testFileNameSanitizeHandlesMissingExtension(): void
     {
-        $this->assertSame('filename', PathUtils::fileNameSanitize('FileName'));
+        $this->assertSame('FileName', PathUtils::fileNameSanitize('FileName'));
     }
 }

@@ -29,7 +29,7 @@
         "cs-check": "phpcs --colors -p  src/ tests/",
         "cs-fix": "phpcbf --colors -p src/ tests/",
         "stan": "phpstan analyse",
-        "test": "phpunit"
+        "test": "vendor/bin/phpunit"
     },
     "config": {
         "allow-plugins": {

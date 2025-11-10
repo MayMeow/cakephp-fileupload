@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace FileUpload\File;
 
-use Laminas\Diactoros\UploadedFile;
+use Psr\Http\Message\UploadedFileInterface;
 
 class UploadedFileDecorator
 {
     public function __construct(
-        protected UploadedFile $originalData,
+        protected UploadedFileInterface $originalData,
         protected string $storageType,
         protected array $options = []
     ) {
     }
 
-    public function getOriginalData(): UploadedFile
+    public function getOriginalData(): UploadedFileInterface
     {
         return $this->originalData;
     }
@@ -24,15 +24,17 @@ class UploadedFileDecorator
         return $this->storageType;
     }
 
-    public function get(string $key): string
+    public function get(string $key, mixed $default = null): mixed
     {
-        return $this->options[$key] ?? "";
+        return $this->options[$key] ?? $default;
     }
 
     public function getFileName(): string
     {
-        if (isset($this->options['fileName'])) {
-            return $this->options['fileName'];
+        $fileName = $this->get('fileName');
+
+        if (is_string($fileName) && $fileName !== '') {
+            return $fileName;
         }
 
         return $this->originalData->getClientFilename();

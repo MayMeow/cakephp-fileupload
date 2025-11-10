@@ -12,7 +12,7 @@ abstract class StorageManager implements StorageManagerInterface
         $this->configurations = $configurations;
     }
 
-    public function getConfig(string $key, $default = ""): string
+    public function getConfig(?string $key = null, mixed $default = null): mixed
     {
         if ($key === null) {
             return $this->configurations;

@@ -12,8 +12,7 @@ interface StorageManagerInterface
     public function __construct(array $configurations = []);
 
     /**
-     * @param \Psr\Http\Message\UploadedFileInterface $fileObject UploadedFile Object
-     * @return \FileUpload\File\StoredFileInterface
+     * @param \Psr\Http\Message\UploadedFileInterface $fileObject Uploaded file object
      */
     public function put(UploadedFileInterface $fileObject): UploadedFileDecorator;
 

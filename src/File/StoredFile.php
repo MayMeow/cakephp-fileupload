@@ -3,28 +3,57 @@ declare(strict_types=1);
 
 namespace FileUpload\File;
 
+use FileUpload\Exceptions\FileContentException;
+
 class StoredFile implements StoredFileInterface
 {
-    protected string $mimeType;
+    private ?string $content = null;
+
+    private ?string $mimeType = null;
+
     public function __construct(
-        protected string $file,
+        private string $file,
     ) {
     }
 
-    public function getContent(): string    
+    public function getContent(): string
     {
-        $stream = fopen($this->file, 'rb');
-        $content = stream_get_contents($stream);
+        if ($this->content !== null) {
+            return $this->content;
+        }
 
-        $finfo = finfo_open();
-        $this->mimeType = finfo_buffer($finfo, $content, FILEINFO_MIME_TYPE);
-        finfo_close($finfo);
+        $content = @file_get_contents($this->file);
 
-        return $content;
+        if ($content === false) {
+            throw new FileContentException(sprintf('Cannot load content of file "%s"', $this->file));
+        }
+
+        $this->content = $content;
+        $this->mimeType = $this->detectMimeType($content);
+
+        return $this->content;
     }
 
     public function getMimeType(): string
     {
+        if ($this->mimeType === null) {
+            $this->mimeType = $this->detectMimeType($this->getContent());
+        }
+
         return $this->mimeType;
+    }
+
+    private function detectMimeType(string $content): string
+    {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+        if ($finfo === false) {
+            return 'application/octet-stream';
+        }
+
+        $mimeType = finfo_buffer($finfo, $content) ?: 'application/octet-stream';
+        finfo_close($finfo);
+
+        return $mimeType;
     }
 }

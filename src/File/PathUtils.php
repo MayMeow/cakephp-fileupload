@@ -14,6 +14,10 @@ class PathUtils
         $filename = pathinfo($filename, PATHINFO_FILENAME);
         $filename = Text::slug($filename);
 
+        if ($ext === '') {
+            return $filename;
+        }
+
         return $filename . '.' . $ext;
     }
 }

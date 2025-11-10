@@ -20,11 +20,18 @@ class LocalStorageManager extends StorageManager
      */
     public function put(UploadedFileInterface $fileObject): UploadedFileDecorator
     {   
+        $storagePath = (string)$this->getConfig('storagePath');
+        $normalizedPath = rtrim($storagePath, DIRECTORY_SEPARATOR . '/');
+
+        if ($normalizedPath !== '') {
+            $normalizedPath .= DIRECTORY_SEPARATOR;
+        }
+
         $fileName = PathUtils::fileNameSanitize($fileObject->getClientFilename());
-        $fileObject->moveTo($this->getConfig('storagePath') . $fileName);
+        $fileObject->moveTo($normalizedPath . $fileName);
 
         $uploadedFile = new UploadedFileDecorator($fileObject, self::STORAGE_TYPE, options: [
-            'storagePath' => $this->getConfig('storagePath'),
+            'storagePath' => $storagePath,
             'fileName' => $fileName,
         ]);
 
@@ -40,7 +47,14 @@ class LocalStorageManager extends StorageManager
      */
     public function pull(string $fileName): StoredFileInterface
     {
-        $file = new StoredFile(file: $this->getConfig('storagePath') . $fileName);
+        $storagePath = (string)$this->getConfig('storagePath');
+        $normalizedPath = rtrim($storagePath, DIRECTORY_SEPARATOR . '/');
+
+        if ($normalizedPath !== '') {
+            $normalizedPath .= DIRECTORY_SEPARATOR;
+        }
+
+        $file = new StoredFile(file: $normalizedPath . $fileName);
 
         return $file;
     }
